@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="เว็บธนาคารบน Ethereum สำหรับฝาก ถอน และตรวจสอบยอดเงินผ่าน MetaMask">
+  <title>Bank DApp · Infura | ธนาคารบน Ethereum</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./config.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="./index.html" aria-label="Bank DApp หน้าหลัก">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span>Bank<span class="brand-accent">DApp</span></span>
+      </a>
+      <div class="topbar-actions">
+        <span class="network"><i aria-hidden="true"></i><span id="network-name">Hoodi</span></span>
+        <button class="button wallet-button" id="connect" type="button">เชื่อมต่อ MetaMask</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <div class="intro">
+      <h1>ธนาคารบน Ethereum</h1>
+      <p>ฝาก ถอน และตรวจสอบยอดเงินบน Hoodi ด้วย MetaMask และ Infura</p>
+    </div>
+
+    <div class="overview">
+      <section class="balance-card" aria-labelledby="balance-heading">
+        <div class="balance-art" aria-hidden="true"></div>
+        <div class="balance-content">
+          <h2 id="balance-heading">ยอดเงินในสัญญา</h2>
+          <p class="balance-value" id="balance">—</p>
+          <p class="balance-caption" id="balance-caption">เชื่อมต่อ MetaMask เพื่อดูยอดเงิน</p>
+        </div>
+        <button class="button balance-button" id="refresh" type="button" disabled>
+          <span aria-hidden="true">↻</span> ตรวจสอบยอดเงิน
+        </button>
+      </section>
+
+      <section class="panel contract-panel" aria-labelledby="contract-heading">
+        <div class="section-title">
+          <h2 id="contract-heading">Smart Contract</h2>
+          <span id="contract-badge" class="status-badge">ยังไม่ได้ตั้งค่า</span>
+        </div>
+        <form id="contract-form">
+          <label for="address">ที่อยู่สัญญา Bank</label>
+          <div class="address-row">
+            <input id="address" class="address-input" type="text" placeholder="0x…" maxlength="42" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+            <button type="submit" class="button secondary">บันทึก</button>
+          </div>
+        </form>
+        <p class="detail" id="contract-detail"></p>
+        <form id="infura-form" class="infura-form">
+          <div class="section-title">
+            <label for="infura-key">Infura API Key</label>
+            <span id="infura-status" class="status-badge">ยังไม่ได้ตั้งค่า</span>
+          </div>
+          <div class="address-row">
+            <input id="infura-key" class="address-input" type="password" placeholder="API Key" maxlength="128" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="infura-hint" required>
+            <button id="infura-submit" type="submit" class="button secondary">เชื่อมต่อ</button>
+            <button id="infura-clear" type="button" class="button secondary" hidden>ล้างคีย์</button>
+          </div>
+          <p id="infura-hint" class="detail">ใช้คีย์จาก Infura Dashboard ค่านี้เก็บไว้ในเซสชันของเบราว์เซอร์</p>
+        </form>
+      </section>
+    </div>
+
+    <div class="feedback" id="feedback" role="status" aria-atomic="true" hidden></div>
+
+    <section class="operations" aria-labelledby="operations-heading">
+      <h2 id="operations-heading">ทำรายการ</h2>
+      <div class="operation-grid">
+        <section class="panel operation" aria-labelledby="deposit-heading">
+          <span class="operation-icon deposit-icon" aria-hidden="true">+</span>
+          <div class="operation-title"><h3 id="deposit-heading">ฝากเงิน</h3><span>Deposit</span></div>
+          <form id="deposit-form">
+            <label for="deposit-amount">จำนวนที่ต้องการฝาก</label>
+            <div class="amount-field"><input id="deposit-amount" type="text" inputmode="decimal" placeholder="0.00" maxlength="100" autocomplete="off" spellcheck="false" required disabled><span>ETH</span></div>
+            <button class="button primary" id="deposit-button" type="submit" disabled>ฝากเงิน</button>
+          </form>
+        </section>
+        <section class="panel operation" aria-labelledby="withdraw-heading">
+          <span class="operation-icon withdraw-icon" aria-hidden="true">−</span>
+          <div class="operation-title"><h3 id="withdraw-heading">ถอนเงิน</h3><span>Withdraw</span></div>
+          <form id="withdraw-form">
+            <label for="withdraw-amount">จำนวนที่ต้องการถอน</label>
+            <div class="amount-field"><input id="withdraw-amount" type="text" inputmode="decimal" placeholder="0.00" maxlength="100" autocomplete="off" spellcheck="false" required disabled><span>ETH</span></div>
+            <button class="button secondary" id="withdraw-button" type="submit" disabled>ถอนเงิน</button>
+          </form>
+        </section>
+      </div>
+    </section>
+
+    <section class="panel history" aria-labelledby="history-heading">
+      <div class="section-title"><h2 id="history-heading">รายการล่าสุด</h2><span class="detail">ตั้งแต่เปิดหน้านี้</span></div>
+      <p class="detail" id="empty-history">ยังไม่มีรายการในหน้านี้</p>
+      <ul class="transactions" id="transactions" aria-label="รายการฝากและถอน"></ul>
+    </section>
+
+    <footer class="footer">
+      <span>Bank DApp · Infura</span>
+      <div class="student">
+        <span>รหัสนักศึกษา <strong id="student-id">ยังไม่ระบุ</strong></span>
+        <span>ชื่อ–นามสกุล <strong id="student-name">ยังไม่ระบุ</strong></span>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
